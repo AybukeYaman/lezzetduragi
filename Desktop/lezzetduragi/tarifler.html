@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tüm Tarifler - Lezzet Durağı</title>
+    <meta name="description" content="Lezzet Durağı'ndaki tüm denenmiş, lezzetli ve pratik yemek tariflerini keşfedin.">
+    <style>
+        /* --- TEMEL RESET VE GENEL STİLLER --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            overflow: hidden; /* clear floats */
+            padding: 0 20px;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: #d6336c; /* Ana vurgu rengi */
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #d6336c;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #c2255c;
+            text-decoration: none;
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #d6336c;
+            border: 1px solid #d6336c;
+        }
+        .btn-outline:hover {
+            background-color: #d6336c;
+            color: #fff;
+        }
+
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: #fff;
+            color: #333;
+            padding: 0.8rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #d6336c;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo span {
+            margin-left: 8px;
+            font-size: 1.5rem;
+        }
+
+        .navbar .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links li {
+            margin-left: 25px;
+        }
+
+        .navbar .nav-links a {
+            color: #333;
+            padding: 10px 5px;
+            display: inline-block;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .navbar .nav-links a:hover,
+        .navbar .nav-links a.active {
+            color: #d6336c;
+            font-weight: bold;
+        }
+
+        .navbar .auth-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar .auth-links .btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .navbar .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .navbar .menu-toggle span {
+            background: #333;
+            border-radius: 2px;
+            height: 3px;
+            margin: 4px 0;
+            width: 25px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* --- SECTIONS (Genel Sayfa Başlığı için) --- */
+        .page-header {
+            background-color: #e9ecef;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .page-header h1 {
+            font-size: 2.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .page-header p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+
+        /* --- FILTER/SORT BAR --- */
+        .filter-sort-bar {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap; /* Küçük ekranlarda alt alta geçmesi için */
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .filter-sort-bar .filter-group,
+        .filter-sort-bar .sort-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-sort-bar label {
+            font-weight: 500;
+            color: #555;
+        }
+        .filter-sort-bar select,
+        .filter-sort-bar input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .filter-sort-bar input[type="text"] {
+            min-width: 200px; /* Arama kutusu için minimum genişlik */
+        }
+
+
+        /* --- RECIPE CARDS (Ana sayfadaki ile aynı) --- */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .recipe-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; /* İçeriği daha iyi yönetmek için */
+            flex-direction: column; /* Kart içeriğini dikeyde sırala */
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-card-content {
+            padding: 20px;
+            flex-grow: 1; /* İçeriğin kartın kalanını doldurmasını sağla */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .recipe-card h3 a {
+            color: inherit;
+        }
+        .recipe-card h3 a:hover {
+            color: #d6336c;
+            text-decoration: none;
+        }
+
+        .recipe-card p.description { /* Açıklama için ayrı bir class */
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+            flex-grow: 1; /* Açıklamanın mevcut alanı doldurmasını sağla */
+        }
+
+        .recipe-card .recipe-meta {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: auto; /* Meta bilgilerini kartın en altına iter */
+            padding-top: 10px; /* Açıklama ile arasına boşluk */
+            border-top: 1px solid #eee; /* Üstüne ince bir çizgi */
+        }
+         .recipe-card .recipe-meta span {
+             margin-right: 10px;
+         }
+         .recipe-card .recipe-meta span i {
+            margin-right: 5px;
+            color: #d6336c;
+        }
+        .recipe-card .btn { /* Kart içindeki butonu biraz daha küçük yapabiliriz */
+            margin-top: 15px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            align-self: flex-start; /* Butonu sola yasla */
+        }
+
+        /* --- PAGINATION --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px 0;
+        }
+        .pagination a, .pagination span {
+            color: #d6336c;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #d6336c;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #d6336c;
+            color: #fff;
+        }
+        .pagination .current-page {
+            background-color: #d6336c;
+            color: #fff;
+            border-color: #d6336c;
+        }
+        .pagination .disabled {
+            color: #aaa;
+            border-color: #ddd;
+            pointer-events: none; /* Tıklanamaz yapar */
+        }
+
+
+        /* --- FOOTER (Ana sayfadaki ile aynı) --- */
+        .footer {
+            background: #333;
+            color: #f4f4f4;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+        }
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+        .footer .social-links a {
+            color: #f4f4f4;
+            margin: 0 10px;
+            font-size: 1.2rem;
+        }
+        .footer .social-links a:hover {
+            color: #d6336c;
+            text-decoration: none;
+        }
+
+        /* --- RESPONSIVE TASARIM (Navbar için olanlar ana sayfadaki ile aynı) --- */
+        @media (max-width: 992px) {
+            .navbar .container { }
+            .navbar .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #fff;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                padding: 10px 0;
+            }
+            .navbar .nav-links.active {
+                display: flex;
+            }
+            .navbar .nav-links li {
+                margin: 10px 0;
+                text-align: center;
+                width: 100%;
+            }
+            .navbar .nav-links a {
+                padding: 10px;
+                width: 100%;
+            }
+            .navbar .menu-toggle {
+                display: flex;
+                order: 3;
+            }
+            .navbar .auth-links {
+                order: 2;
+                margin-left: auto;
+                margin-right: 15px;
+            }
+            .navbar .nav-links {
+                order: 4;
+            }
+            .navbar .logo {
+                order: 1;
+            }
+            .filter-sort-bar {
+                flex-direction: column;
+                align-items: stretch; /* Öğeleri tam genişliğe yayar */
+            }
+            .filter-sort-bar .filter-group,
+            .filter-sort-bar .sort-group {
+                width: 100%; /* Mobil için tam genişlik */
+                justify-content: space-between; /* Etiket ve select arasını açar */
+            }
+            .filter-sort-bar input[type="text"] {
+                width: 100%; /* Arama kutusu tam genişlik */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 2.2rem; }
+            .page-header p { font-size: 1rem; }
+
+            .navbar .auth-links .btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            .navbar .logo {
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Lezzet Durağı <span role="img" aria-label="yemek tenceresi">🍲</span></a>
+            <button class="menu-toggle" id="mobile-menu" aria-label="Menüyü aç/kapat">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="nav-links-list">
+                <li><a href="index.html">Ana Sayfa</a></li>
+                <li><a href="tarifler.html" class="active">Tarifler</a></li> <li><a href="kategoriler.html">Kategoriler</a></li>
+                <li><a href="kac-kalori.html">Kaç Kalori?</a></li>
+                <li><a href="diyet-menuleri.html">Diyet Menüleri</a></li>
+                <li><a href="hakkimizda.html">Hakkımızda</a></li>
+            </ul>
+            <div class="auth-links">
+                <a href="login.html" class="btn btn-outline">Giriş Yap</a>
+                <a href="register.html" class="btn">Kayıt Ol</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <h1>Tüm Tariflerimiz</h1>
+            <p>Mutfak maceralarınız için ilham alacağınız yüzlerce lezzet bir arada!</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="filter-sort-bar">
+                <div class="filter-group">
+                    <label for="search-recipe">Tarif Ara:</label>
+                    <input type="text" id="search-recipe" placeholder="örn: Tavuk Sote, Kek...">
+                </div>
+                <div class="filter-group">
+                    <label for="category-filter">Kategori:</label>
+                    <select id="category-filter">
+                        <option value="">Tüm Kategoriler</option>
+                        <option value="corbalar">Çorbalar</option>
+                        <option value="ana-yemekler">Ana Yemekler</option>
+                        <option value="tatlilar">Tatlılar</option>
+                        <option value="salatalar">Salatalar & Mezeler</option>
+                        <option value="hamur-isleri">Hamur İşleri</option>
+                    </select>
+                </div>
+                <div class="sort-group">
+                    <label for="sort-by">Sırala:</label>
+                    <select id="sort-by">
+                        <option value="newest">En Yeni</option>
+                        <option value="popular">En Popüler</option>
+                        <option value="name-asc">Ada Göre (A-Z)</option>
+                        <option value="name-desc">Ada Göre (Z-A)</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="recipe-grid">
+                <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=İslim+Kebabı" alt="İslim Kebabı">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-islim.html">İslim Kebabı (Kürdan Kebabı)</a></h3>
+                        <p class="description">Patlıcan ve köftenin muhteşem uyumuyla hazırlanan, özel günlerin vazgeçilmezi.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 75 dk</span>
+                            <span><i class="fas fa-utensils"></i> 4-6 Kişilik</span>
+                            <span><i class="fas fa-concierge-bell"></i> Orta Zorluk</span>
+                        </div>
+                        <a href="tarif-detay-islim.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=Zeytinyağlı+Enginar" alt="Zeytinyağlı Enginar Dolması">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-enginar.html">Zeytinyağlı Enginar Dolması</a></h3>
+                        <p class="description">Sağlıklı ve hafif bir Ege klasiği. Mevsiminde taptaze enginarlarla.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 50 dk</span>
+                            <span><i class="fas fa-utensils"></i> 4 Adet</span>
+                             <span><i class="fas fa-concierge-bell"></i> Kolay</span>
+                        </div>
+                        <a href="tarif-detay-enginar.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=Brownie" alt="Islak Brownie">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-brownie.html">Tam Kıvamında Islak Brownie</a></h3>
+                        <p class="description">Yoğun çikolata lezzetiyle, içi ıslak dışı kıtırdayan mükemmel bir brownie.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 40 dk</span>
+                            <span><i class="fas fa-utensils"></i> 8 Dilim</span>
+                             <span><i class="fas fa-concierge-bell"></i> Kolay</span>
+                        </div>
+                        <a href="tarif-detay-brownie.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=Ezogelin+Çorbası" alt="Ezogelin Çorbası">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-ezogelin.html">Ezogelin Çorbası</a></h3>
+                        <p class="description">Anadolu'nun geleneksel lezzeti, doyurucu ve besleyici bir çorba.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 45 dk</span>
+                            <span><i class="fas fa-utensils"></i> 6 Kişilik</span>
+                             <span><i class="fas fa-concierge-bell"></i> Kolay</span>
+                        </div>
+                        <a href="tarif-detay-ezogelin.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                 <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=Pancake" alt="Pancake Tarifi">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-pancake.html">Pofuduk Pancake</a></h3>
+                        <p class="description">Kahvaltıların yıldızı, yumuşacık ve lezzetli pancake'ler.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 20 dk</span>
+                            <span><i class="fas fa-utensils"></i> 10-12 Adet</span>
+                             <span><i class="fas fa-concierge-bell"></i> Çok Kolay</span>
+                        </div>
+                        <a href="tarif-detay-pancake.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                 <div class="recipe-card">
+                    <img src="https://via.placeholder.com/400x300.png?text=Makarna+Salatası" alt="Makarna Salatası">
+                    <div class="recipe-card-content">
+                        <h3><a href="tarif-detay-makarna-salatasi.html">Yoğurtlu Makarna Salatası</a></h3>
+                        <p class="description">Pratik, doyurucu ve her davete yakışan ferahlatıcı bir salata.</p>
+                        <div class="recipe-meta">
+                            <span><i class="fas fa-clock"></i> 25 dk</span>
+                            <span><i class="fas fa-utensils"></i> 6-8 Kişilik</span>
+                             <span><i class="fas fa-concierge-bell"></i> Çok Kolay</span>
+                        </div>
+                        <a href="tarif-detay-makarna-salatasi.html" class="btn">Tarife Git</a>
+                    </div>
+                </div>
+                </section>
+
+            <nav class="pagination" aria-label="Sayfalar">
+                <a href="#" class="disabled" aria-label="Önceki Sayfa">&laquo; Önceki</a>
+                <a href="#" class="current-page" aria-current="page">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <span>...</span>
+                <a href="#">10</a>
+                <a href="#" aria-label="Sonraki Sayfa">Sonraki &raquo;</a>
+            </nav>
+
+        </div> </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+            </div>
+            <p>&copy; <span id="current-year"></span> Lezzet Durağı. Tüm Hakları Saklıdır.</p>
+            <p><a href="gizlilik-politikasi.html" style="color: #ccc; font-size: 0.9em;">Gizlilik Politikası</a> | <a href="kullanim-sartlari.html" style="color: #ccc; font-size: 0.9em;">Kullanım Şartları</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Basit mobil menü toggle
+        const menuToggle = document.getElementById('mobile-menu');
+        const navLinksList = document.getElementById('nav-links-list');
+
+        if (menuToggle && navLinksList) { // Elemanların varlığını kontrol et
+            menuToggle.addEventListener('click', () => {
+                navLinksList.classList.toggle('active');
+                menuToggle.classList.toggle('open'); // Opsiyonel: Hamburger ikonunu X'e çevirmek için
+            });
+        }
+
+
+        // Footer'da güncel yılı gösterme
+        const currentYearElement = document.getElementById('current-year');
+        if (currentYearElement) { // Elemanın varlığını kontrol et
+            currentYearElement.textContent = new Date().getFullYear();
+        }
+    </script>
+
+</body>
+</html>
