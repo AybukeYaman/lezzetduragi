@@ -7,7 +7,5 @@ registerBtn.addEventListener('click', () => {
 });
 
 loginBtn.addEventListener('click', () => {
-
-    //görsel geçiş kontrolü
     container.classList.remove("active");
 });
